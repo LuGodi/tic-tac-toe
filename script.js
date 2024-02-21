@@ -12,19 +12,65 @@ const gameboard = (function () {
   const getGameboard = () => board;
   const getGameboardCell = (row, column) => board[row][column];
   const setCellValue = (row, column, mark) => (board[row][column] = mark);
-  return { getGameboard, resetGameboard, getGameboardCell, setCellValue };
+  //I still need to optimize this logic a lot but for now will have to do. After player2 playing theres no point for checking if player1 won so maybe pass the mark as argument
+  const getHorizontalMatch = function (row) {
+    if (board[row][0] === null) return;
+    if (board[row][0] === board[row][1] && board[row][0] === board[row][2]) {
+      console.log(
+        `match on horizontal, on row ${row}, value of ${board[row][0]}`
+      );
+      return board[row][0];
+    }
+    console.log("no match");
+    return false;
+  };
+  const getVerticalMatch = function (col) {
+    if (board[0][col] === null) return;
+    if (board[0][col] === board[1][col] && board[0][col] === board[2][col]) {
+      console.log(
+        `match for vertical on col ${col} and value of ${board[0][col]}`
+      );
+      return board[0][col];
+    }
+    console.log("no vertical match found");
+  };
+  const getDiagonalMatch = function () {
+    if (board[1][1] === null) return;
+    if (board[0][0] === board[1][1] && board[1][1] === board[2][2]) {
+      console.log(
+        `Diagonal match found on board[0][0] with value of ${board[0][0]}`
+      );
+      return board[0][0];
+    } else if (board[2][0] === board[1][1] && board[2][0] === board[0][2]) {
+      console.log(`Diagonal match on board[2,0] value of ${board[2][0]}`);
+      return board[2][0];
+    }
+    console.log("no diagonal match found");
+    return false;
+  };
+  return {
+    getGameboard,
+    resetGameboard,
+    getGameboardCell,
+    setCellValue,
+    getHorizontalMatch,
+    getVerticalMatch,
+    getDiagonalMatch,
+  };
 })();
 
 function CreatePlayer(name, mark) {
+  // what if I wanted to keep track of all created players?
   let score = 0;
 
+  //keep an array with the players
   const getPlayerScore = () => score;
   //should this be on the scoreboard object or here?
   const incrementPlayerScore = () => ++score;
   const resetPlayerScore = () => (score = 0);
   const getPlayerMark = () => mark;
   const getPlayerName = () => name;
-
+  const getPlayerByMark = (targetMark) => {};
   return {
     getPlayerScore,
     incrementPlayerScore,
@@ -36,23 +82,41 @@ function CreatePlayer(name, mark) {
 
 const gameController = (function () {
   let playerTurn;
+  let move;
   const startNewGame = function () {
     gameboard.resetGameboard();
     player1 = CreatePlayer("player1", "X");
     player2 = CreatePlayer("player2", "O");
     playerTurn = player1;
+    move = 0;
 
     //so vai existir nessa funcao ? acho que existe fora pq n ta com let
   };
   const changePlayer = () =>
     (playerTurn = playerTurn === player1 ? player2 : player1);
-  const getCurrentPlayer = () => playerTurn;
+  const getCurrentPlayer = () => playerTurn; // stuff like this shouldnt be on player factory instead?
   const playMove = function (row, column) {
     let currentPlayer = playerTurn;
     gameboard.setCellValue(row, column, currentPlayer.getPlayerMark());
     gameboard.getGameboard(); //change to render in the future
     changePlayer();
+    move++;
   };
+
+  const checkWinner = () => {};
+
+  const playRound = () => {};
 
   return { startNewGame, getCurrentPlayer, playMove };
 })();
+
+gameController.startNewGame();
+gameController.playMove(0, 0);
+gameController.playMove(0, 1);
+gameController.playMove(1, 0);
+gameController.playMove(0, 2);
+gameController.playMove(2, 0);
+gameController.playMove(1, 2);
+gameController.playMove(1, 1);
+gameController.playMove(2, 1);
+gameController.playMove(2, 2);
