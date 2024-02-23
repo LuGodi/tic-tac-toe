@@ -19,20 +19,14 @@ const gameboard = (function () {
     return textBoard;
   };
   const getGameboardCell = (row, column) => board[row][column];
+  const getCellValue = (row, column) => board[row][column];
   const setCellValue = (row, column, mark) => {
-    if (board[row][column] !== null) {
-      console.error(`Cannot overwrite move, select another cell`);
-      return false;
-    }
+    // I dont know if this logic should be implemented here or on gamecontroller
+    // if (board[row][column] !== null) {
+    //   console.error(`Cannot overwrite move, select another cell`);
+    //   return false;
+    // }
     board[row][column] = mark;
-    console.log(
-      `player ${gameController
-        .getCurrentPlayer()
-        .getPlayerName()}, marked ${gameController
-        .getCurrentPlayer()
-        .getPlayerMark()}, on cell ${(row, column)} succeed`
-    );
-    return true;
   };
   //I still need to optimize this logic a lot but for now will have to do. After player2 playing theres no point for checking if player1 won so maybe pass the mark as argument
   const getHorizontalMatch = function (row) {
@@ -79,6 +73,7 @@ const gameboard = (function () {
     getVerticalMatch,
     getDiagonalMatch,
     renderGameboard,
+    getCellValue,
   };
 })();
 
@@ -134,7 +129,23 @@ const gameController = (function () {
   const getCurrentPlayer = () => playerTurn; // stuff like this shouldnt be on player factory instead?
   const playMove = function (row, column) {
     let currentPlayer = playerTurn;
+    if (gameboard.getCellValue(row, column) !== null) {
+      console.error(
+        "cannot overwrite cell value, please playmove again and select another one"
+      );
+      return;
+    }
+
     gameboard.setCellValue(row, column, currentPlayer.getPlayerMark());
+    console.log(
+      `player ${gameController
+        .getCurrentPlayer()
+        .getPlayerName()}, marked ${gameController
+        .getCurrentPlayer()
+        .getPlayerMark()}, on cell ${(row, column)} succeed`
+    );
+    //to prevent changing the playerTurn if he doesnt make a move
+
     //i have to be sure they suceeded on set cell value
     //I can check when I ask for a prompt
     let currentGameboard = gameboard.renderGameboard(); //change to render in the future
