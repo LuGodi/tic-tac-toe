@@ -10,8 +10,30 @@ const gameboard = (function () {
     return board;
   };
   const getGameboard = () => board;
+  const renderGameboard = () => {
+    //TODO
+    let textBoard = "";
+    for (row of board) {
+      textBoard += `${JSON.stringify(row)}\n`;
+    }
+    return textBoard;
+  };
   const getGameboardCell = (row, column) => board[row][column];
-  const setCellValue = (row, column, mark) => (board[row][column] = mark);
+  const setCellValue = (row, column, mark) => {
+    if (board[row][column] !== null) {
+      console.error(`Cannot overwrite move, select another cell`);
+      return false;
+    }
+    board[row][column] = mark;
+    console.log(
+      `player ${gameController
+        .getCurrentPlayer()
+        .getPlayerName()}, marked ${gameController
+        .getCurrentPlayer()
+        .getPlayerMark()}, on cell ${(row, column)} succeed`
+    );
+    return true;
+  };
   //I still need to optimize this logic a lot but for now will have to do. After player2 playing theres no point for checking if player1 won so maybe pass the mark as argument
   const getHorizontalMatch = function (row) {
     if (board[row][0] === null) return;
@@ -56,6 +78,7 @@ const gameboard = (function () {
     getHorizontalMatch,
     getVerticalMatch,
     getDiagonalMatch,
+    renderGameboard,
   };
 })();
 
@@ -112,7 +135,10 @@ const gameController = (function () {
   const playMove = function (row, column) {
     let currentPlayer = playerTurn;
     gameboard.setCellValue(row, column, currentPlayer.getPlayerMark());
-    gameboard.getGameboard(); //change to render in the future
+    //i have to be sure they suceeded on set cell value
+    //I can check when I ask for a prompt
+    let currentGameboard = gameboard.renderGameboard(); //change to render in the future
+    console.log(currentGameboard);
     changePlayer();
     move++;
   };
@@ -133,4 +159,3 @@ gameController.playMove(2, 0);
 gameController.playMove(1, 2);
 gameController.playMove(1, 1);
 gameController.playMove(2, 1);
-gameController.playMove(2, 2);
