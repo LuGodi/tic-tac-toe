@@ -59,34 +59,48 @@ const gameboard = (function () {
   };
 })();
 
-function CreatePlayer(name, mark) {
-  // what if I wanted to keep track of all created players?
-  let score = 0;
-
-  //keep an array with the players
-  const getPlayerScore = () => score;
-  //should this be on the scoreboard object or here?
-  const incrementPlayerScore = () => ++score;
-  const resetPlayerScore = () => (score = 0);
-  const getPlayerMark = () => mark;
-  const getPlayerName = () => name;
-  const getPlayerByMark = (targetMark) => {};
-  return {
-    getPlayerScore,
-    incrementPlayerScore,
-    resetPlayerScore,
-    getPlayerMark,
-    getPlayerName,
+const players = (function () {
+  const playersList = [];
+  // const getPlayerList = () => playersList; it will return a shallow copy, defeats purpose.
+  const addToPlayerList = (player) => {
+    playersList.push(player);
   };
-}
+  const getPlayerByMark = (mark) =>
+    playersList.find((player) => player.getPlayerMark() === mark);
+  function createPlayer(name, mark) {
+    // what if I wanted to keep track of all created players?
+    //i can wrap this on an iife called players, but wouldnt that defeat the purpose of the simplicity of factory functions?
+
+    let score = 0;
+
+    //keep an array with the players
+    const getPlayerScore = () => score;
+    //should this be on the scoreboard object or here?
+    const incrementPlayerScore = () => ++score;
+    const resetPlayerScore = () => (score = 0);
+    const getPlayerMark = () => mark;
+    const getPlayerName = () => name;
+    const getPlayerByMark = (targetMark) => {};
+    const newPlayer = {
+      getPlayerScore,
+      incrementPlayerScore,
+      resetPlayerScore,
+      getPlayerMark,
+      getPlayerName,
+    };
+    addToPlayerList(newPlayer);
+    return newPlayer;
+  }
+  return { createPlayer, getPlayerByMark };
+})();
 
 const gameController = (function () {
   let playerTurn;
   let move;
   const startNewGame = function () {
     gameboard.resetGameboard();
-    player1 = CreatePlayer("player1", "X");
-    player2 = CreatePlayer("player2", "O");
+    player1 = players.createPlayer("player1", "X");
+    player2 = players.createPlayer("player2", "O");
     playerTurn = player1;
     move = 0;
 
