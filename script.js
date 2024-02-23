@@ -1,6 +1,7 @@
 const gameboard = (function () {
   const board = [];
   const resetGameboard = () => {
+    if (board.length > 1) board.splice(0, board.length);
     for (let row = 0; row < 3; row++) {
       board.push([]);
       for (let column = 0; column < 3; column++) {
@@ -11,21 +12,14 @@ const gameboard = (function () {
   };
   const getGameboard = () => board;
   const renderGameboard = () => {
-    //TODO
     let textBoard = "";
     for (row of board) {
       textBoard += `${JSON.stringify(row)}\n`;
     }
     return textBoard;
   };
-  const getGameboardCell = (row, column) => board[row][column];
   const getCellValue = (row, column) => board[row][column];
   const setCellValue = (row, column, mark) => {
-    // I dont know if this logic should be implemented here or on gamecontroller
-    // if (board[row][column] !== null) {
-    //   console.error(`Cannot overwrite move, select another cell`);
-    //   return false;
-    // }
     board[row][column] = mark;
   };
   //I still need to optimize this logic a lot but for now will have to do. After player2 playing theres no point for checking if player1 won so maybe pass the mark as argument
@@ -35,7 +29,8 @@ const gameboard = (function () {
       console.log(
         `match on horizontal, on row ${row}, value of ${board[row][0]}`
       );
-      return board[row][0];
+      // return board[row][0];
+      return true;
     }
     console.log("no match");
     return false;
@@ -46,7 +41,7 @@ const gameboard = (function () {
       console.log(
         `match for vertical on col ${col} and value of ${board[0][col]}`
       );
-      return board[0][col];
+      return true;
     }
     console.log("no vertical match found");
   };
@@ -56,10 +51,10 @@ const gameboard = (function () {
       console.log(
         `Diagonal match found on board[0][0] with value of ${board[0][0]}`
       );
-      return board[0][0];
+      return true;
     } else if (board[2][0] === board[1][1] && board[2][0] === board[0][2]) {
       console.log(`Diagonal match on board[2,0] value of ${board[2][0]}`);
-      return board[2][0];
+      return true;
     }
     console.log("no diagonal match found");
     return false;
@@ -67,7 +62,7 @@ const gameboard = (function () {
   return {
     getGameboard,
     resetGameboard,
-    getGameboardCell,
+
     setCellValue,
     getHorizontalMatch,
     getVerticalMatch,
@@ -80,6 +75,14 @@ const gameboard = (function () {
 const players = (function () {
   const playersList = [];
   // const getPlayerList = () => playersList; it will return a shallow copy, defeats purpose.
+  const getPlayersName = () => {
+    const playersName = [];
+    for (let player of playersList) {
+      playersName.push(player.getPlayerName());
+    }
+    return playersName;
+  };
+  // const getPlayersList = () => JSON.stringify(playersList); /// to prevent access to the playersList from outside
   const addToPlayerList = (player) => {
     playersList.push(player);
   };
@@ -109,18 +112,23 @@ const players = (function () {
     addToPlayerList(newPlayer);
     return newPlayer;
   }
-  return { createPlayer, getPlayerByMark };
+  const playersOverview = function () {};
+  return { createPlayer, getPlayerByMark, getPlayersName, playersList };
 })();
 
 const gameController = (function () {
   let playerTurn;
   let move;
+  const player1 = players.createPlayer("player1", "X");
+  const player2 = players.createPlayer("player2", "O");
+  let winner;
   const startNewGame = function () {
     gameboard.resetGameboard();
-    player1 = players.createPlayer("player1", "X");
-    player2 = players.createPlayer("player2", "O");
     playerTurn = player1;
     move = 0;
+    gameover = false;
+    winner = "";
+    gameboard.renderGameboard();
 
     //so vai existir nessa funcao ? acho que existe fora pq n ta com let
   };
@@ -142,7 +150,7 @@ const gameController = (function () {
         .getCurrentPlayer()
         .getPlayerName()}, marked ${gameController
         .getCurrentPlayer()
-        .getPlayerMark()}, on cell ${(row, column)} succeed`
+        .getPlayerMark()}, on cell ${row},${column} succeeded`
     );
     //to prevent changing the playerTurn if he doesnt make a move
 
@@ -150,23 +158,49 @@ const gameController = (function () {
     //I can check when I ask for a prompt
     let currentGameboard = gameboard.renderGameboard(); //change to render in the future
     console.log(currentGameboard);
-    changePlayer();
     move++;
+    if (move >= 4) checkWinnerMove(row, column);
+    changePlayer();
   };
 
-  const checkWinner = () => {};
+  const checkWinnerMove = (row, column) => {
+    gameover = !!(
+      gameboard.getDiagonalMatch() ||
+      gameboard.getHorizontalMatch(row) ||
+      gameboard.getVerticalMatch(column)
+    );
+    if (gameover === true) {
+      winner = getCurrentPlayer();
+      winner.incrementPlayerScore();
 
-  const playRound = () => {};
+      console.log(`${winner.getPlayerName()} won this round`);
+      console.log(renderScore());
+    }
+  };
 
-  return { startNewGame, getCurrentPlayer, playMove };
+  const playRound = () => {
+    startNewGame();
+    while (gameover === false) {
+      let [row, column] = prompt(
+        `Player ${playerTurn.getPlayerName()}'s turn, Select row and column to play`
+      ).split(" ");
+      playMove(row, column);
+    }
+    console.log(gameover);
+    return gameover;
+  };
+
+  const renderScore = () => {
+    const scoreBoard = {};
+    for (let player of players.playersList) {
+      scoreBoard[player.getPlayerName()] = player.getPlayerScore();
+    }
+    let scoreBoardVisual = `-------  S C O R E  --------\n\n`;
+    for (const key in scoreBoard) {
+      scoreBoardVisual += `${key} ............. ${scoreBoard[key]} \n`;
+    }
+    scoreBoardVisual += `--------------------------------`;
+    return scoreBoardVisual;
+  };
+  return { startNewGame, getCurrentPlayer, playMove, playRound, renderScore };
 })();
-
-gameController.startNewGame();
-gameController.playMove(0, 0);
-gameController.playMove(0, 1);
-gameController.playMove(1, 0);
-gameController.playMove(0, 2);
-gameController.playMove(2, 0);
-gameController.playMove(1, 2);
-gameController.playMove(1, 1);
-gameController.playMove(2, 1);
