@@ -1,4 +1,4 @@
 Tic Tac Toe project
 
-- [] game logic - console version
+- [x] game logic - console version
 - []

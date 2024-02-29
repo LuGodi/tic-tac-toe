@@ -10,7 +10,6 @@ const gameboard = (function () {
     }
     return board;
   };
-  const getGameboard = () => board;
   const renderGameboard = () => {
     let textBoard = "";
     for (row of board) {
@@ -60,9 +59,7 @@ const gameboard = (function () {
     return false;
   };
   return {
-    getGameboard,
     resetGameboard,
-
     setCellValue,
     getHorizontalMatch,
     getVerticalMatch,
