@@ -1,9 +1,9 @@
 ### Start with the basic layout
 
-a container which is set to flex
-banner should take 100%
-scoreboard should take around 30%
-game container should take the rest of the space
+- a container which is set to flex
+- banner should take 100%
+  scoreboard should take around 30%
+  game container should take the rest of the space
 
 need to look up how flex-basis work again
 
@@ -13,3 +13,10 @@ ok eu nao lembro se flex wrap eh no parent container ou no child, acho que no pa
 - nao sei como to tao enferrujada em flex
 
 - flex grow eh no child?
+
+#### Como vou da render no tabuleiro de tic tac toe ?
+
+ele precisa ser uma grid 3x3
+
+- [ ] grid 3x3
+- [ ] delegate the event listener to the grid container

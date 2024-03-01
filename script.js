@@ -1,6 +1,7 @@
 const gameboard = (function () {
   const board = [];
-  const resetGameboard = () => {
+  const initGameboard = () => {
+    //check if a gameboard already exists, if so, remove it from the list
     if (board.length > 1) board.splice(0, board.length);
     for (let row = 0; row < 3; row++) {
       board.push([]);
@@ -58,14 +59,21 @@ const gameboard = (function () {
     console.log("no diagonal match found");
     return false;
   };
+  const checkEmptyCells = () => {
+    for (row of board) {
+      if (row.some((element) => element === null)) return true;
+    }
+    return false;
+  };
   return {
-    resetGameboard,
+    initGameboard,
     setCellValue,
     getHorizontalMatch,
     getVerticalMatch,
     getDiagonalMatch,
     renderGameboard,
     getCellValue,
+    checkEmptyCells,
   };
 })();
 
@@ -120,7 +128,7 @@ const gameController = (function () {
   const player2 = players.createPlayer("player2", "O");
   let winner;
   const startNewGame = function () {
-    gameboard.resetGameboard();
+    gameboard.initGameboard();
     playerTurn = player1;
     move = 0;
     gameover = false;
@@ -156,7 +164,14 @@ const gameController = (function () {
     let currentGameboard = gameboard.renderGameboard(); //change to render in the future
     console.log(currentGameboard);
     move++;
-    if (move >= 4) checkWinnerMove(row, column);
+    if (move >= 4) {
+      checkWinnerMove(row, column);
+      checkTie();
+    }
+
+    //how can i implement tie?
+
+    // if (gameboard.checkEmptyCells() === false)
     changePlayer();
   };
 
@@ -171,6 +186,14 @@ const gameController = (function () {
       winner.incrementPlayerScore();
 
       console.log(`${winner.getPlayerName()} won this round`);
+      console.log(renderScore());
+    }
+  };
+  const checkTie = () => {
+    if (gameboard.checkEmptyCells() === false) {
+      gameover = true;
+      winner = "tie";
+      console.log(`It's a Tie, no points have been awarded`);
       console.log(renderScore());
     }
   };

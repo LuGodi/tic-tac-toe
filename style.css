@@ -37,4 +37,6 @@ body {
   flex-shrink: 0;
   flex-basis: 70%;
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
 }
