@@ -65,6 +65,7 @@ const gameboard = (function () {
     }
     return false;
   };
+  //if im revealing all functions, is factory even necessary?
   return {
     initGameboard,
     setCellValue,
@@ -168,10 +169,6 @@ const gameController = (function () {
       checkWinnerMove(row, column);
       checkTie();
     }
-
-    //how can i implement tie?
-
-    // if (gameboard.checkEmptyCells() === false)
     changePlayer();
   };
 
@@ -223,4 +220,31 @@ const gameController = (function () {
     return scoreBoardVisual;
   };
   return { startNewGame, getCurrentPlayer, playMove, playRound, renderScore };
+})();
+
+const displayController = (function () {
+  //DOM
+  const gridContainerEl = document.querySelector(".game-container");
+
+  //
+  const initTicTacToeBoard = (() => {
+    const boardElements = [];
+    for (let row = 0; row < 3; row++) {
+      for (let column = 0; column < 3; column++) {
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("grid-cell");
+        cellDiv.dataset.coordinates = `${row},${column}`;
+        boardElements.push(cellDiv);
+      }
+    }
+    gridContainerEl.append(...boardElements);
+  })();
+  const renderBoardDisplay = (gameboard) => {
+    for (row of gameboard) {
+      for (column of row) {
+      }
+    }
+  };
+
+  return { initTicTacToeBoard };
 })();
