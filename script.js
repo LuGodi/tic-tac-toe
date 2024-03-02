@@ -67,6 +67,7 @@ const gameboard = (function () {
   };
   //if im revealing all functions, is factory even necessary?
   return {
+    board,
     initGameboard,
     setCellValue,
     getHorizontalMatch,
@@ -125,8 +126,9 @@ const players = (function () {
 const gameController = (function () {
   let playerTurn;
   let move;
-  const player1 = players.createPlayer("player1", "X");
-  const player2 = players.createPlayer("player2", "O");
+  let gameover;
+  const player1 = players.createPlayer("player 1", "X");
+  const player2 = players.createPlayer("player 2", "O");
   let winner;
   const startNewGame = function () {
     gameboard.initGameboard();
@@ -166,10 +168,13 @@ const gameController = (function () {
     console.log(currentGameboard);
     move++;
     if (move >= 4) {
-      checkWinnerMove(row, column);
-      checkTie();
+      if (checkWinnerMove(row, column)) return;
+      //TODO upon checking for winner  move, return so it wont check for a tie
+      else if (checkTie()) return;
+      // can I refactor this to checkWinnerMove(row,column)||checkTie() ) ?
     }
     changePlayer();
+    displayController.logTurn();
   };
 
   const checkWinnerMove = (row, column) => {
@@ -182,16 +187,20 @@ const gameController = (function () {
       winner = getCurrentPlayer();
       winner.incrementPlayerScore();
 
+      displayController.logWinner(winner);
       console.log(`${winner.getPlayerName()} won this round`);
       console.log(renderScore());
+      return true;
     }
   };
   const checkTie = () => {
     if (gameboard.checkEmptyCells() === false) {
       gameover = true;
       winner = "tie";
+      displayController.logWinner(winner);
       console.log(`It's a Tie, no points have been awarded`);
       console.log(renderScore());
+      return true;
     }
   };
 
@@ -203,9 +212,11 @@ const gameController = (function () {
       ).split(" ");
       playMove(row, column);
     }
+    //TODO here i should print the winner and the result, after play
     console.log(gameover);
     return gameover;
   };
+  const gameStatus = () => gameover;
 
   const renderScore = () => {
     const scoreBoard = {};
@@ -219,15 +230,32 @@ const gameController = (function () {
     scoreBoardVisual += `--------------------------------`;
     return scoreBoardVisual;
   };
-  return { startNewGame, getCurrentPlayer, playMove, playRound, renderScore };
+  return {
+    startNewGame,
+    getCurrentPlayer,
+    playMove,
+    playRound,
+    renderScore,
+    gameStatus,
+  };
 })();
 
 const displayController = (function () {
   //DOM
   const gridContainerEl = document.querySelector(".game-container");
+  const newGameButton = document.querySelector("#new-game-button");
+  const turnLogger = document.querySelector(".turn-heading");
 
+  //Listeners
+  gridContainerEl.addEventListener("click", placeMark);
+  newGameButton.addEventListener("click", (e) => {
+    gameController.startNewGame();
+    e.target.style.display = "none";
+    turnLogger.style.display = "block";
+    logTurn();
+  });
   //
-  const initTicTacToeBoard = (() => {
+  const TicTacToeBoard = (() => {
     const boardElements = [];
     for (let row = 0; row < 3; row++) {
       for (let column = 0; column < 3; column++) {
@@ -238,13 +266,42 @@ const displayController = (function () {
       }
     }
     gridContainerEl.append(...boardElements);
+    return boardElements;
   })();
-  const renderBoardDisplay = (gameboard) => {
-    for (row of gameboard) {
-      for (column of row) {
-      }
+  const renderBoardDisplay = (board) => {
+    //TODO change magic numbers against clean code
+    const gb = board.flat();
+    for (let i = 0; i < gb.length; i++) {
+      TicTacToeBoard[i].innerText = gb[i];
     }
   };
 
-  return { initTicTacToeBoard };
+  //hoisting
+  //this function should only place a mark
+  function placeMark(event) {
+    if (gameController.gameStatus() === true) return; //means the game is over or there is no game
+    const [row, column] = event.target.dataset.coordinates.split(",");
+    console.log({ row, column });
+    gameController.playMove(row, column);
+    renderBoardDisplay(gameboard.board);
+
+    //for play move to be called I need to init the board through gamecontroller start new game or there will be no board and no players.
+  }
+
+  function logTurn() {
+    turnLogger.textContent = `${gameController
+      .getCurrentPlayer()
+      .getPlayerName()} Turn;`;
+  }
+
+  function logWinner(winner) {
+    let text = "";
+    if (winner === "tie") {
+      text = "Its a tie";
+    } else {
+      text = `Game over, ${winner.getPlayerName()} won`;
+    }
+    turnLogger.textContent = text;
+  }
+  return { placeMark, renderBoardDisplay, logTurn, logWinner };
 })();
