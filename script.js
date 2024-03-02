@@ -137,10 +137,9 @@ const gameController = (function () {
     gameover = false;
     winner = "";
     gameboard.renderGameboard(); //this renders for the console
-    displayController.renderBoardDisplay(gameboard.board);
-    displayController.logTurn();
-
-    //so vai existir nessa funcao ? acho que existe fora pq n ta com let
+    //i want the game controller to only handle the game logic, let the displayController take care of the rendering
+    // displayController.renderBoardDisplay(gameboard.board);
+    // displayController.logTurn();
   };
   const changePlayer = () =>
     (playerTurn = playerTurn === player1 ? player2 : player1);
@@ -252,9 +251,9 @@ const displayController = (function () {
   //Listeners
   gridContainerEl.addEventListener("click", placeMark);
   newGameButton.addEventListener("click", (e) => {
-    gameController.startNewGame();
-    e.target.style.display = "none";
-    turnLogger.style.display = "block";
+    e.target.classList.add("hidden");
+    turnLogger.classList.remove("hidden");
+    startNewGame();
   });
   //
   const TicTacToeBoard = (() => {
@@ -293,12 +292,14 @@ const displayController = (function () {
   }
 
   function logTurn() {
+    turnLogger.classList.remove("hidden"); //make sure its not hidden
     turnLogger.textContent = `${gameController
       .getCurrentPlayer()
       .getPlayerName()} Turn;`;
   }
 
   function logWinner(winner) {
+    turnLogger.classList.remove("hidden");
     let text = "";
     if (winner === "tie") {
       text = "Its a tie";
@@ -309,7 +310,7 @@ const displayController = (function () {
     const paragraphEl = document.createElement("p");
     paragraphEl.textContent = "Click here to start a new game";
     paragraphEl.addEventListener("click", (e) => {
-      gameController.startNewGame();
+      startNewGame();
       e.target.remove();
       console.log("click");
     });
@@ -325,6 +326,12 @@ const displayController = (function () {
 
   function showNewGameButton() {
     newGameButton.style.display = "block";
+  }
+
+  function startNewGame() {
+    gameController.startNewGame();
+    logTurn();
+    renderBoardDisplay(gameboard.board);
   }
   return { placeMark, renderBoardDisplay, logTurn, logWinner };
 })();
