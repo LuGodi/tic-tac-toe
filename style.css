@@ -31,6 +31,7 @@ body {
   text-align: center;
   flex-grow: 1;
   border-right: 2px solid purple;
+  padding: 0 10px;
 }
 
 .game-container {
@@ -81,4 +82,12 @@ body {
 
 .hidden {
   display: none;
+}
+
+.scoreboard-container {
+}
+
+.scoreboard-div-child {
+  display: flex;
+  justify-content: space-between;
 }

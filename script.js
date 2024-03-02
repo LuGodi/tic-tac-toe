@@ -247,6 +247,7 @@ const displayController = (function () {
   const newGameButton = document.querySelector("#new-game-button");
   const turnLogger = document.querySelector(".turn-heading");
   const gamelogSpan = document.querySelector("#game-log-span");
+  const scoreboardDiv = document.querySelector(".scoreboard-div");
 
   //Listeners
   gridContainerEl.addEventListener("click", placeMark);
@@ -277,7 +278,20 @@ const displayController = (function () {
   };
 
   //TODO
-  const renderScoreboardDisplay = () => {};
+  const renderScoreboardDisplay = () => {
+    const elements = [];
+    for (let player of players.playersList) {
+      const divEl = document.createElement("div");
+      divEl.classList.add("scoreboard-div-child");
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = player.getPlayerName();
+      const pointSpan = document.createElement("span");
+      pointSpan.textContent = player.getPlayerScore();
+      divEl.append(nameSpan, pointSpan);
+      elements.push(divEl);
+    }
+    scoreboardDiv.replaceChildren(...elements);
+  };
 
   //hoisting
   //this function should only place a mark
@@ -306,9 +320,11 @@ const displayController = (function () {
     } else {
       text = `Game over, ${winner.getPlayerName()} won`;
     }
+    renderScoreboardDisplay();
     turnLogger.textContent = text;
     const paragraphEl = document.createElement("p");
     paragraphEl.textContent = "Click here to start a new game";
+    //im adding event listener repeatly ?
     paragraphEl.addEventListener("click", (e) => {
       startNewGame();
       e.target.remove();
@@ -333,5 +349,11 @@ const displayController = (function () {
     logTurn();
     renderBoardDisplay(gameboard.board);
   }
-  return { placeMark, renderBoardDisplay, logTurn, logWinner };
+  return {
+    placeMark,
+    renderBoardDisplay,
+    logTurn,
+    logWinner,
+    renderScoreboardDisplay,
+  };
 })();
