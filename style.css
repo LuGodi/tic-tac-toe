@@ -70,7 +70,16 @@ body {
   padding: 0.5rem;
   letter-spacing: 0.6rem;
 }
-
+#game-log-span > p {
+  letter-spacing: 0.2rem;
+  font-size: 0.8rem;
+  text-align: end;
+  margin-top: 1.5rem;
+}
 .turn-heading {
+  display: none;
+}
+
+.hidden {
   display: none;
 }

@@ -18,8 +18,8 @@ ok eu nao lembro se flex wrap eh no parent container ou no child, acho que no pa
 
 ele precisa ser uma grid 3x3
 
-- [ ] grid 3x3
-- [ ] delegate the event listener to the grid container
+- [x] grid 3x3
+- [x] delegate the event listener to the grid container
 
 whats the difference between a factory pattern and obj literal pattern if im revealing all functions?
 
@@ -52,3 +52,9 @@ se eu quisesse que o gameController q tivesse uma instancia do gameboard como eu
 > Clean up the interface to allow players to put in their names, include a button to start/restart the game and add a display element that shows the results upon game end!
 
 - css properties being accessible through js domenlightement has some stuff
+
+- visual tip on players turn
+
+- I should move the check winner and check tie to outside the play move, and just after it gets out of the loop it should return the result
+
+- [ ] I need to render the scoreboard

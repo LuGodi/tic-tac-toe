@@ -136,7 +136,9 @@ const gameController = (function () {
     move = 0;
     gameover = false;
     winner = "";
-    gameboard.renderGameboard();
+    gameboard.renderGameboard(); //this renders for the console
+    displayController.renderBoardDisplay(gameboard.board);
+    displayController.logTurn();
 
     //so vai existir nessa funcao ? acho que existe fora pq n ta com let
   };
@@ -245,6 +247,7 @@ const displayController = (function () {
   const gridContainerEl = document.querySelector(".game-container");
   const newGameButton = document.querySelector("#new-game-button");
   const turnLogger = document.querySelector(".turn-heading");
+  const gamelogSpan = document.querySelector("#game-log-span");
 
   //Listeners
   gridContainerEl.addEventListener("click", placeMark);
@@ -252,7 +255,6 @@ const displayController = (function () {
     gameController.startNewGame();
     e.target.style.display = "none";
     turnLogger.style.display = "block";
-    logTurn();
   });
   //
   const TicTacToeBoard = (() => {
@@ -269,12 +271,14 @@ const displayController = (function () {
     return boardElements;
   })();
   const renderBoardDisplay = (board) => {
-    //TODO change magic numbers against clean code
     const gb = board.flat();
     for (let i = 0; i < gb.length; i++) {
       TicTacToeBoard[i].innerText = gb[i];
     }
   };
+
+  //TODO
+  const renderScoreboardDisplay = () => {};
 
   //hoisting
   //this function should only place a mark
@@ -302,6 +306,25 @@ const displayController = (function () {
       text = `Game over, ${winner.getPlayerName()} won`;
     }
     turnLogger.textContent = text;
+    const paragraphEl = document.createElement("p");
+    paragraphEl.textContent = "Click here to start a new game";
+    paragraphEl.addEventListener("click", (e) => {
+      gameController.startNewGame();
+      e.target.remove();
+      console.log("click");
+    });
+    gamelogSpan.append(paragraphEl);
+  }
+
+  function toggleHidden(event) {
+    event.target.classList.toggle("hidden");
+  }
+  function hideElement(element) {
+    element.classList.add("hidden");
+  }
+
+  function showNewGameButton() {
+    newGameButton.style.display = "block";
   }
   return { placeMark, renderBoardDisplay, logTurn, logWinner };
 })();
