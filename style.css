@@ -14,9 +14,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  letter-spacing: 1rem;
+  letter-spacing: 0.7rem;
   font-size: larger;
   padding-left: 6rem;
+  font-family: "Kode Mono", monospace;
 }
 .container {
   background-color: rgba(9, 32, 52, 0.831);
@@ -74,6 +75,9 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 3rem;
+  font-family: "Kode Mono", monospace;
+  font-weight: 700;
+  user-select: none;
 }
 
 .grid-cell[data-coordinates="0,0"],
@@ -96,15 +100,17 @@ body {
   font-size: 0.8rem;
   text-align: end;
   margin-top: 1.5rem;
-}
-.turn-heading {
+  cursor: pointer;
 }
 
 .hidden {
   display: none;
 }
 
-.scoreboard-container {
+.left-container {
+  display: flex;
+}
+.options-container {
 }
 
 .scoreboard-div-child {

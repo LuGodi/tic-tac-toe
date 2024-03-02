@@ -256,6 +256,7 @@ const displayController = (function () {
     turnLogger.classList.remove("hidden");
     startNewGame();
   });
+
   //
   const TicTacToeBoard = (() => {
     const boardElements = [];
@@ -293,6 +294,7 @@ const displayController = (function () {
     scoreboardDiv.replaceChildren(...elements);
   };
 
+  const changePlayerNames = (event) => {};
   //hoisting
   //this function should only place a mark
   function placeMark(event) {
@@ -331,13 +333,6 @@ const displayController = (function () {
       console.log("click");
     });
     gamelogSpan.append(paragraphEl);
-  }
-
-  function toggleHidden(event) {
-    event.target.classList.toggle("hidden");
-  }
-  function hideElement(element) {
-    element.classList.add("hidden");
   }
 
   function showNewGameButton() {
