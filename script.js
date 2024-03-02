@@ -309,7 +309,7 @@ const displayController = (function () {
     turnLogger.classList.remove("hidden"); //make sure its not hidden
     turnLogger.textContent = `${gameController
       .getCurrentPlayer()
-      .getPlayerName()} Turn;`;
+      .getPlayerName()} Turn`;
   }
 
   function logWinner(winner) {
@@ -348,6 +348,7 @@ const displayController = (function () {
     gameController.startNewGame();
     logTurn();
     renderBoardDisplay(gameboard.board);
+    renderScoreboardDisplay();
   }
   return {
     placeMark,
