@@ -95,12 +95,16 @@ const players = (function () {
   };
   const getPlayerByMark = (mark) =>
     playersList.find((player) => player.getPlayerMark() === mark);
+
+  //create player factory
   function createPlayer(name, mark) {
     // what if I wanted to keep track of all created players?
     //i can wrap this on an iife called players, but wouldnt that defeat the purpose of the simplicity of factory functions?
 
     let score = 0;
-
+    const changePlayerName = (newName) => {
+      name = newName ?? "";
+    };
     //keep an array with the players
     const getPlayerScore = () => score;
     //should this be on the scoreboard object or here?
@@ -115,6 +119,7 @@ const players = (function () {
       resetPlayerScore,
       getPlayerMark,
       getPlayerName,
+      changePlayerName,
     };
     addToPlayerList(newPlayer);
     return newPlayer;
@@ -217,7 +222,7 @@ const gameController = (function () {
     console.log(gameover);
     return gameover;
   };
-  const gameStatus = () => gameover;
+  const gameStatus = () => gameover; //if true game is over, false means theres a ongoing game
 
   const renderScore = () => {
     const scoreBoard = {};
@@ -256,6 +261,20 @@ const displayController = (function () {
     turnLogger.classList.remove("hidden");
     startNewGame();
   });
+  scoreboardDiv.addEventListener("keydown", (e) => {
+    if (e.target.dataset.playerIdentifier === undefined) return;
+    if (e.key === "Enter") {
+      e.target.blur();
+    }
+  });
+  scoreboardDiv.addEventListener("focusout", (e) => {
+    console.log(e.target.textContent);
+    changePlayerNameHandler(e);
+    renderScoreboardDisplay();
+    //I have to change on the banner as well, here a pubsub would be fun
+    //but only change it if theres a ongoing game
+    if (gameController.gameStatus() === false) logTurn();
+  });
 
   //
   const TicTacToeBoard = (() => {
@@ -281,20 +300,26 @@ const displayController = (function () {
   //TODO
   const renderScoreboardDisplay = () => {
     const elements = [];
-    for (let player of players.playersList) {
+    for (let i = 0; i < players.playersList.length; i++) {
       const divEl = document.createElement("div");
       divEl.classList.add("scoreboard-div-child");
       const nameSpan = document.createElement("span");
-      nameSpan.textContent = player.getPlayerName();
+      nameSpan.setAttribute("contenteditable", "plaintext-only");
+      nameSpan.textContent = players.playersList[i].getPlayerName();
+      nameSpan.dataset.playerIdentifier = i;
       const pointSpan = document.createElement("span");
-      pointSpan.textContent = player.getPlayerScore();
+      pointSpan.textContent = players.playersList[i].getPlayerScore();
       divEl.append(nameSpan, pointSpan);
       elements.push(divEl);
     }
     scoreboardDiv.replaceChildren(...elements);
   };
 
-  const changePlayerNames = (event) => {};
+  const changePlayerNameHandler = (event) => {
+    const playerIndex = event.target.dataset.playerIdentifier;
+    const newName = event.target.textContent;
+    players.playersList[playerIndex].changePlayerName(newName);
+  };
   //hoisting
   //this function should only place a mark
   function placeMark(event) {
@@ -308,7 +333,7 @@ const displayController = (function () {
   }
 
   function logTurn() {
-    turnLogger.classList.remove("hidden"); //make sure its not hidden
+    // turnLogger.classList.remove("hidden"); //make sure its not hidden
     turnLogger.textContent = `${gameController
       .getCurrentPlayer()
       .getPlayerName()} Turn`;

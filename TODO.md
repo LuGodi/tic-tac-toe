@@ -57,4 +57,12 @@ se eu quisesse que o gameController q tivesse uma instancia do gameboard como eu
 
 - I should move the check winner and check tie to outside the play move, and just after it gets out of the loop it should return the result
 
-- [ ] I need to render the scoreboard
+- [x] I need to render the scoreboard
+- [ ] Implement ability to change player name
+
+  - eu achei que poderia ser no player ou no createPlayer, mas so pode ser no createPlayer ja que so ele tem acesso a modificar o name, pois eh uma propriedade que ta privada atraves da closure
+  - ok mas eu vou precisar da referencia dele pra modificar no playerList
+  - depois de mudar o nome eu preciso render o scoreboard display tb
+
+- [ ] Adjust for loop on display controller to use the getter for the list instead of the list itself
+- [ ] visual aid green on winning matches
