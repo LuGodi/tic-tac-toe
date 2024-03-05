@@ -238,18 +238,6 @@ const gameController = (function () {
     }
   };
 
-  const playRound = () => {
-    startNewGame();
-    while (gameover === false) {
-      let [row, column] = prompt(
-        `Player ${playerTurn.getPlayerName()}'s turn, Select row and column to play`
-      ).split(" ");
-      playMove(row, column);
-    }
-    //TODO here i should print the winner and the result, after play
-    console.log(gameover);
-    return gameover;
-  };
   const gameStatus = () => !!gameover; //if true game is over, false means theres a ongoing game
 
   const renderScore = () => {
@@ -268,7 +256,7 @@ const gameController = (function () {
     startNewGame,
     getCurrentPlayer,
     playMove,
-    playRound,
+
     renderScore,
     gameStatus,
   };
@@ -328,7 +316,6 @@ const displayController = (function () {
     }
   };
 
-  //TODO
   const renderScoreboardDisplay = () => {
     const elements = [];
     for (let i = 0; i < players.playersList.length; i++) {
