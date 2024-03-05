@@ -78,7 +78,7 @@ const gameboard = (function () {
       const result = [
         [2, 0],
         [1, 1],
-        [2, 0],
+        [0, 2],
       ];
       console.log(result);
       return result;
@@ -323,7 +323,7 @@ const displayController = (function () {
     for (let i = 0; i < gb.length; i++) {
       TicTacToeBoard[i].innerText = gb[i];
       if (resetColor === true) {
-        TicTacToeBoard[i].classList.remove("green");
+        TicTacToeBoard[i].classList.remove("winner-cell");
       }
     }
   };
@@ -405,7 +405,7 @@ const displayController = (function () {
   function startNewGame() {
     gameController.startNewGame();
     logTurn();
-    renderBoardDisplay(gameboard.board);
+    renderBoardDisplay(gameboard.board, true);
     renderScoreboardDisplay();
   }
   return {
