@@ -219,7 +219,7 @@ const gameController = (function () {
       winner = getCurrentPlayer();
       winner.incrementPlayerScore();
 
-      displayController.logWinner(winner);
+      displayController.logWinner(winner, gameover);
       console.log(`${winner.getPlayerName()} won this round`);
       console.log(renderScore());
       console.log(`gameover result is`);
@@ -318,10 +318,13 @@ const displayController = (function () {
     gridContainerEl.append(...boardElements);
     return boardElements;
   })();
-  const renderBoardDisplay = (board) => {
+  const renderBoardDisplay = (board, resetColor) => {
     const gb = board.flat();
     for (let i = 0; i < gb.length; i++) {
       TicTacToeBoard[i].innerText = gb[i];
+      if (resetColor === true) {
+        TicTacToeBoard[i].classList.remove("green");
+      }
     }
   };
 
@@ -367,13 +370,20 @@ const displayController = (function () {
       .getPlayerName()} Turn`;
   }
 
-  function logWinner(winner) {
+  function logWinner(winner, coordinates) {
     turnLogger.classList.remove("hidden");
     let text = "";
     if (winner === "tie") {
       text = "Its a tie";
     } else {
       text = `Game over, ${winner.getPlayerName()} won`;
+      for (let coordinate of coordinates) {
+        const strCoordinate = coordinate.toString();
+        const winningCell = TicTacToeBoard.find(
+          (cell) => cell.dataset.coordinates === strCoordinate
+        );
+        winningCell.classList.add("winner-cell");
+      }
     }
     renderScoreboardDisplay();
     turnLogger.textContent = text;
