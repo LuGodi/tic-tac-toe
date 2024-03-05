@@ -201,13 +201,13 @@ const gameController = (function () {
     console.log(currentGameboard);
     move++;
     if (move >= 4) {
-      if (checkWinnerMove(row, column)) return checkWinnerMove(row, column);
-      //TODO upon checking for winner  move, return so it wont check for a tie
+      const winnerCoordinates = checkWinnerMove(row, column);
+      if (!!winnerCoordinates) return winnerCoordinates;
       else if (checkTie()) return;
       // can I refactor this to checkWinnerMove(row,column)||checkTie() ) ?
     }
     changePlayer();
-    displayController.logTurn();
+    displayController.logTurn(); //why is it here instead of in display controller?
   };
 
   const checkWinnerMove = (row, column) => {
@@ -250,7 +250,7 @@ const gameController = (function () {
     console.log(gameover);
     return gameover;
   };
-  const gameStatus = () => gameover; //if true game is over, false means theres a ongoing game
+  const gameStatus = () => !!gameover; //if true game is over, false means theres a ongoing game
 
   const renderScore = () => {
     const scoreBoard = {};
