@@ -201,7 +201,7 @@ const gameController = (function () {
     console.log(currentGameboard);
     move++;
     if (move >= 4) {
-      if (checkWinnerMove(row, column)) return;
+      if (checkWinnerMove(row, column)) return checkWinnerMove(row, column);
       //TODO upon checking for winner  move, return so it wont check for a tie
       else if (checkTie()) return;
       // can I refactor this to checkWinnerMove(row,column)||checkTie() ) ?
@@ -211,19 +211,20 @@ const gameController = (function () {
   };
 
   const checkWinnerMove = (row, column) => {
-    gameover = !!(
+    gameover =
       gameboard.getDiagonalMatch() ||
       gameboard.getHorizontalMatch(row) ||
-      gameboard.getVerticalMatch(column)
-    );
-    if (gameover === true) {
+      gameboard.getVerticalMatch(column);
+    if (!!gameover === true) {
       winner = getCurrentPlayer();
       winner.incrementPlayerScore();
 
       displayController.logWinner(winner);
       console.log(`${winner.getPlayerName()} won this round`);
       console.log(renderScore());
-      return true;
+      console.log(`gameover result is`);
+      console.log(gameover);
+      return gameover;
     }
   };
   const checkTie = () => {
