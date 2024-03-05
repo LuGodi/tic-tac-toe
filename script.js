@@ -30,7 +30,13 @@ const gameboard = (function () {
         `match on horizontal, on row ${row}, value of ${board[row][0]}`
       );
       // return board[row][0];
-      return true;
+      const result = [
+        [row, 0],
+        [row, 1],
+        [row, 2],
+      ];
+      console.log(result);
+      return result;
     }
     console.log("no match");
     return false;
@@ -41,9 +47,18 @@ const gameboard = (function () {
       console.log(
         `match for vertical on col ${col} and value of ${board[0][col]}`
       );
-      return true;
+
+      const results = [
+        [0, parseInt(col)],
+        [1, parseInt(col)],
+        [2, parseInt(col)],
+      ];
+      console.log(results);
+      return results;
     }
+
     console.log("no vertical match found");
+    return false;
   };
   const getDiagonalMatch = function () {
     if (board[1][1] === null) return;
@@ -51,10 +66,22 @@ const gameboard = (function () {
       console.log(
         `Diagonal match found on board[0][0] with value of ${board[0][0]}`
       );
-      return true;
+      const result = [
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ];
+      console.log(result);
+      return result;
     } else if (board[2][0] === board[1][1] && board[2][0] === board[0][2]) {
       console.log(`Diagonal match on board[2,0] value of ${board[2][0]}`);
-      return true;
+      const result = [
+        [2, 0],
+        [1, 1],
+        [2, 0],
+      ];
+      console.log(result);
+      return result;
     }
     console.log("no diagonal match found");
     return false;

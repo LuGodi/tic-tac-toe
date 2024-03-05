@@ -82,7 +82,9 @@ body {
   font-weight: 700;
   user-select: none;
 }
-
+.winner-cell {
+  background-color: greenyellow;
+}
 .grid-cell[data-coordinates="0,0"],
 .grid-cell[data-coordinates="0,2"] {
 }
